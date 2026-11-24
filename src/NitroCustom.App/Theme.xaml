@@ -1,0 +1,444 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:NitroCustom.App">
+
+    <!-- Tokens: see DESIGN.md. Nitro look: brown-black, ember orange to red. -->
+    <Color x:Key="BgColor">#0E0705</Color>
+    <Color x:Key="SurfaceColor">#1C0D08</Color>
+    <Color x:Key="SurfaceHiColor">#2E150C</Color>
+    <Color x:Key="LineColor">#4A2414</Color>
+    <Color x:Key="TextColor">#F2ECE8</Color>
+    <Color x:Key="SoftTextColor">#D9CEC8</Color>
+    <Color x:Key="MutedColor">#B8A59B</Color>
+    <Color x:Key="AccentColor">#FF5A1F</Color>
+    <Color x:Key="RedColor">#E3262B</Color>
+    <Color x:Key="AmberColor">#FFB21F</Color>
+
+    <SolidColorBrush x:Key="Bg" Color="{StaticResource BgColor}" />
+    <SolidColorBrush x:Key="Surface" Color="{StaticResource SurfaceColor}" />
+    <SolidColorBrush x:Key="SurfaceHi" Color="{StaticResource SurfaceHiColor}" />
+    <SolidColorBrush x:Key="Line" Color="{StaticResource LineColor}" />
+    <SolidColorBrush x:Key="Text" Color="{StaticResource TextColor}" />
+    <SolidColorBrush x:Key="SoftText" Color="{StaticResource SoftTextColor}" />
+    <SolidColorBrush x:Key="Muted" Color="{StaticResource MutedColor}" />
+    <SolidColorBrush x:Key="Accent" Color="{StaticResource AccentColor}" />
+
+    <LinearGradientBrush x:Key="AccentGrad" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="{StaticResource RedColor}" Offset="0" />
+        <GradientStop Color="{StaticResource AccentColor}" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="HeaderLine" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#FF5A1F" Offset="0" />
+        <GradientStop Color="#00FF5A1F" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="SidebarBg" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#170A07" Offset="0" />
+        <GradientStop Color="#0F0605" Offset="1" />
+    </LinearGradientBrush>
+    <RadialGradientBrush x:Key="WindowBg" Center="0.42,0.42" GradientOrigin="0.42,0.42" RadiusX="0.75" RadiusY="0.9">
+        <GradientStop Color="#3A1709" Offset="0" />
+        <GradientStop Color="#1A0B06" Offset="0.55" />
+        <GradientStop Color="#0B0504" Offset="1" />
+    </RadialGradientBrush>
+
+    <FontFamily x:Key="Display">Bahnschrift</FontFamily>
+    <!-- Static Segoe UI: WPF does not hint variable fonts (Segoe UI Variable) well at small sizes. -->
+    <FontFamily x:Key="Body">Segoe UI</FontFamily>
+    <CornerRadius x:Key="Radius">4</CornerRadius>
+
+    <!-- Motion: one settling curve and two durations for the whole app. -->
+    <CubicEase x:Key="Settle" EasingMode="EaseOut" />
+    <Duration x:Key="Fast">0:0:0.15</Duration>
+    <Duration x:Key="Move">0:0:0.26</Duration>
+
+    <!-- Line icon: 24x24 geometry from Icons.xaml drawn at 18px. -->
+    <Style x:Key="Icon" TargetType="Path">
+        <Setter Property="Width" Value="24" />
+        <Setter Property="Height" Value="24" />
+        <Setter Property="Stretch" Value="None" />
+        <Setter Property="StrokeThickness" Value="1.7" />
+        <Setter Property="StrokeStartLineCap" Value="Round" />
+        <Setter Property="StrokeEndLineCap" Value="Round" />
+        <Setter Property="StrokeLineJoin" Value="Round" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="LayoutTransform">
+            <Setter.Value><ScaleTransform ScaleX="0.75" ScaleY="0.75" /></Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SectionLabel" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Display}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{StaticResource Muted}" />
+        <Setter Property="Margin" Value="0,0,0,8" />
+    </Style>
+
+    <Style x:Key="Caption" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Body}" />
+        <Setter Property="FontSize" Value="12.5" />
+        <Setter Property="Foreground" Value="{StaticResource Muted}" />
+    </Style>
+
+    <!-- Segment (direction): accent layer fades in when checked. -->
+    <Style x:Key="Segment" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{StaticResource Muted}" />
+        <Setter Property="FontFamily" Value="{StaticResource Body}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Grid Height="30">
+                        <Border x:Name="Hover" Background="{StaticResource SurfaceHi}" CornerRadius="3" Opacity="0" />
+                        <Border x:Name="On" Background="{StaticResource AccentGrad}" CornerRadius="3" Opacity="0" />
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="1" Duration="{StaticResource Fast}" /></Storyboard></BeginStoryboard></Trigger.EnterActions>
+                            <Trigger.ExitActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="0" Duration="{StaticResource Fast}" /></Storyboard></BeginStoryboard></Trigger.ExitActions>
+                            <Setter Property="Foreground" Value="{StaticResource Text}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Trigger.EnterActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="On" Storyboard.TargetProperty="Opacity" To="1" Duration="{StaticResource Move}" EasingFunction="{StaticResource Settle}" /></Storyboard></BeginStoryboard></Trigger.EnterActions>
+                            <Trigger.ExitActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="On" Storyboard.TargetProperty="Opacity" To="0" Duration="{StaticResource Move}" EasingFunction="{StaticResource Settle}" /></Storyboard></BeginStoryboard></Trigger.ExitActions>
+                            <Setter Property="Foreground" Value="#FFF7F5" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Plain text-like button (window chrome). -->
+    <Style x:Key="Quiet" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource Muted}" />
+        <Setter Property="FontFamily" Value="{StaticResource Body}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid Background="Transparent">
+                        <Border x:Name="Hover" Background="{StaticResource SurfaceHi}" Opacity="0" />
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="1" Duration="{StaticResource Fast}" /></Storyboard></BeginStoryboard></Trigger.EnterActions>
+                            <Trigger.ExitActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="0" Duration="{StaticResource Fast}" /></Storyboard></BeginStoryboard></Trigger.ExitActions>
+                            <Setter Property="Foreground" Value="{StaticResource Text}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Close button: turns red on hover. -->
+    <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource Quiet}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid Background="Transparent">
+                        <Border x:Name="Hover" Background="{StaticResource AccentGrad}" Opacity="0" />
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="1" Duration="{StaticResource Fast}" /></Storyboard></BeginStoryboard></Trigger.EnterActions>
+                            <Trigger.ExitActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="0" Duration="{StaticResource Fast}" /></Storyboard></BeginStoryboard></Trigger.ExitActions>
+                            <Setter Property="Foreground" Value="#FFF7F5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Colour swatch: grows on hover, outlined when selected. -->
+    <Style x:Key="Swatch" TargetType="RadioButton">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Setter Property="RenderTransform"><Setter.Value><ScaleTransform /></Setter.Value></Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="Ring" BorderBrush="Transparent" BorderThickness="1.5" CornerRadius="5" Padding="2">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="3" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions><BeginStoryboard><Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="1.12" Duration="{StaticResource Fast}" EasingFunction="{StaticResource Settle}" />
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="1.12" Duration="{StaticResource Fast}" EasingFunction="{StaticResource Settle}" />
+                            </Storyboard></BeginStoryboard></Trigger.EnterActions>
+                            <Trigger.ExitActions><BeginStoryboard><Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="1" Duration="{StaticResource Fast}" EasingFunction="{StaticResource Settle}" />
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="1" Duration="{StaticResource Fast}" EasingFunction="{StaticResource Settle}" />
+                            </Storyboard></BeginStoryboard></Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Ring" Property="BorderBrush" Value="{StaticResource Text}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Slider: thin track, gradient fill, square thumb that grows on hover/drag. -->
+    <Style x:Key="ThumbStyle" TargetType="Thumb">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Grid Width="18" Height="18" Background="Transparent">
+                        <Border x:Name="Knob" Width="12" Height="12" Background="{StaticResource Text}" CornerRadius="2" RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform><ScaleTransform /></Border.RenderTransform>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions><BeginStoryboard><Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="Knob" Storyboard.TargetProperty="RenderTransform.ScaleX" To="1.3" Duration="{StaticResource Fast}" />
+                                <DoubleAnimation Storyboard.TargetName="Knob" Storyboard.TargetProperty="RenderTransform.ScaleY" To="1.3" Duration="{StaticResource Fast}" />
+                            </Storyboard></BeginStoryboard></Trigger.EnterActions>
+                            <Trigger.ExitActions><BeginStoryboard><Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="Knob" Storyboard.TargetProperty="RenderTransform.ScaleX" To="1" Duration="{StaticResource Fast}" />
+                                <DoubleAnimation Storyboard.TargetName="Knob" Storyboard.TargetProperty="RenderTransform.ScaleY" To="1" Duration="{StaticResource Fast}" />
+                            </Storyboard></BeginStoryboard></Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="Knob" Property="Background" Value="{StaticResource Accent}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="TrackFill" TargetType="RepeatButton">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Grid Background="Transparent">
+                        <Border Height="3" CornerRadius="1.5" Background="{TemplateBinding Background}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="Slider">
+        <Setter Property="IsMoveToPointEnabled" Value="True" />
+        <Setter Property="IsSnapToTickEnabled" Value="True" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Slider">
+                    <Track x:Name="PART_Track" Height="20">
+                        <Track.DecreaseRepeatButton>
+                            <RepeatButton Style="{StaticResource TrackFill}" Background="{StaticResource AccentGrad}" Command="Slider.DecreaseLarge" />
+                        </Track.DecreaseRepeatButton>
+                        <Track.IncreaseRepeatButton>
+                            <RepeatButton Style="{StaticResource TrackFill}" Background="{StaticResource Line}" Command="Slider.IncreaseLarge" />
+                        </Track.IncreaseRepeatButton>
+                        <Track.Thumb>
+                            <Thumb Style="{StaticResource ThumbStyle}" />
+                        </Track.Thumb>
+                    </Track>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Toggle switch: knob slides, gradient track fades in. -->
+    <Style TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{StaticResource SoftText}" />
+        <Setter Property="FontFamily" Value="{StaticResource Body}" />
+        <Setter Property="FontSize" Value="13.5" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <DockPanel Background="Transparent">
+                        <Grid DockPanel.Dock="Right" Width="38" Height="20" VerticalAlignment="Center">
+                            <Border Background="{StaticResource Line}" CornerRadius="10" />
+                            <Border x:Name="On" Background="{StaticResource AccentGrad}" CornerRadius="10" Opacity="0" />
+                            <Ellipse x:Name="Knob" Width="14" Height="14" Fill="{StaticResource Text}" HorizontalAlignment="Left" Margin="3,0">
+                                <Ellipse.RenderTransform><TranslateTransform x:Name="KnobShift" /></Ellipse.RenderTransform>
+                            </Ellipse>
+                        </Grid>
+                        <ContentPresenter VerticalAlignment="Center" />
+                    </DockPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Trigger.EnterActions><BeginStoryboard><Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="On" Storyboard.TargetProperty="Opacity" To="1" Duration="{StaticResource Move}" />
+                                <DoubleAnimation Storyboard.TargetName="KnobShift" Storyboard.TargetProperty="X" To="18" Duration="{StaticResource Move}" EasingFunction="{StaticResource Settle}" />
+                            </Storyboard></BeginStoryboard></Trigger.EnterActions>
+                            <Trigger.ExitActions><BeginStoryboard><Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="On" Storyboard.TargetProperty="Opacity" To="0" Duration="{StaticResource Move}" />
+                                <DoubleAnimation Storyboard.TargetName="KnobShift" Storyboard.TargetProperty="X" To="0" Duration="{StaticResource Move}" EasingFunction="{StaticResource Settle}" />
+                            </Storyboard></BeginStoryboard></Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource Text}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ComboBox">
+        <Setter Property="Foreground" Value="{StaticResource Text}" />
+        <Setter Property="FontFamily" Value="{StaticResource Body}" />
+        <Setter Property="FontSize" Value="13.5" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <ToggleButton IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Focusable="False">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border x:Name="Bd" Background="{StaticResource Surface}" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="{StaticResource Radius}">
+                                        <Path x:Name="Arrow" Data="M0,0 L4,4 L8,0" Stroke="{StaticResource Muted}" StrokeThickness="1.5" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,12,0" RenderTransformOrigin="0.5,0.5">
+                                            <Path.RenderTransform><RotateTransform x:Name="ArrowTurn" /></Path.RenderTransform>
+                                        </Path>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Accent}" />
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Trigger.EnterActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="ArrowTurn" Storyboard.TargetProperty="Angle" To="180" Duration="{StaticResource Move}" EasingFunction="{StaticResource Settle}" /></Storyboard></BeginStoryboard></Trigger.EnterActions>
+                                            <Trigger.ExitActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="ArrowTurn" Storyboard.TargetProperty="Angle" To="0" Duration="{StaticResource Move}" EasingFunction="{StaticResource Settle}" /></Storyboard></BeginStoryboard></Trigger.ExitActions>
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Accent}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+                        <ContentPresenter Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" Margin="12,7,30,7" IsHitTestVisible="False" VerticalAlignment="Center" />
+                        <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
+                            <Border Background="{StaticResource Surface}" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="{StaticResource Radius}"
+                                    MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,4,0,0" Padding="0,4">
+                                <ScrollViewer MaxHeight="320"><ItemsPresenter /></ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="ComboBoxItem">
+        <Setter Property="Foreground" Value="{StaticResource SoftText}" />
+        <Setter Property="Padding" Value="12,7" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border x:Name="Bd" Background="Transparent" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource SurfaceHi}" />
+                            <Setter Property="Foreground" Value="{StaticResource Text}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource Accent}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Profile row: colour dot = mode-key colour; the moving highlight behind the rows is drawn by the window. -->
+    <Style x:Key="ProfileRow" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{StaticResource SoftText}" />
+        <Setter Property="FontFamily" Value="{StaticResource Body}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Grid Height="36" Background="Transparent">
+                        <Border x:Name="Hover" Background="{StaticResource SurfaceHi}" Opacity="0" CornerRadius="3" />
+                        <DockPanel Margin="14,0">
+                            <Path x:Name="Dot" DockPanel.Dock="Left" Style="{StaticResource Icon}" Data="{TemplateBinding local:Glyph.Data}" Stroke="{TemplateBinding Background}" Margin="0,0,12,0" />
+                            <Path x:Name="Chevron" DockPanel.Dock="Right" Data="M0,0 L4,4 L0,8" Stroke="{StaticResource Muted}" StrokeThickness="1.5" VerticalAlignment="Center" Opacity="0.6" />
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </DockPanel>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="1" Duration="{StaticResource Fast}" /></Storyboard></BeginStoryboard></Trigger.EnterActions>
+                            <Trigger.ExitActions><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="Hover" Storyboard.TargetProperty="Opacity" To="0" Duration="{StaticResource Fast}" /></Storyboard></BeginStoryboard></Trigger.ExitActions>
+                            <Setter Property="Foreground" Value="{StaticResource Text}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Hover" Property="Visibility" Value="Collapsed" />
+                            <Setter Property="Foreground" Value="#FFF7F5" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                            <Setter TargetName="Chevron" Property="Stroke" Value="#FFF7F5" />
+                            <Setter TargetName="Chevron" Property="Opacity" Value="1" />
+                            <Setter TargetName="Dot" Property="Stroke" Value="#FFF7F5" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Sidebar section header: dark band, title, ember underline, like the NitroSense widgets. -->
+    <Style x:Key="SidebarHeader" TargetType="ContentControl">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <StackPanel>
+                        <Border Background="#24100A" Padding="14,9">
+                            <DockPanel>
+                                <Path DockPanel.Dock="Left" Style="{StaticResource Icon}" Data="{TemplateBinding local:Glyph.Data}" Stroke="{StaticResource Accent}" Margin="0,0,10,0" />
+                                <TextBlock Text="{TemplateBinding Content}" FontFamily="Bahnschrift SemiBold" FontSize="15" Foreground="{StaticResource Text}" VerticalAlignment="Center" />
+                            </DockPanel>
+                        </Border>
+                        <Border Height="2" Background="{StaticResource HeaderLine}" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="TextBox">
+        <Setter Property="Foreground" Value="{StaticResource Text}" />
+        <Setter Property="CaretBrush" Value="{StaticResource Text}" />
+        <Setter Property="SelectionBrush" Value="{StaticResource Accent}" />
+        <Setter Property="FontFamily" Value="Cascadia Mono, Consolas" />
+        <Setter Property="FontSize" Value="12.5" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="Bd" Background="{StaticResource Surface}" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="{StaticResource Radius}" Padding="7,5">
+                        <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Muted}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Accent}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

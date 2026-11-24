@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Light background agent: no WPF/WinForms, just a Win32 message loop for the Nitro key and the mode button. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>NitroCustom.Agent</AssemblyName>
+    <RootNamespace>NitroCustom.Agent</RootNamespace>
+    <ApplicationIcon>..\NitroCustom.App\Assets\nitrocustom.ico</ApplicationIcon>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NitroCustom.Core\NitroCustom.Core.csproj" />
+  </ItemGroup>
+
+</Project>

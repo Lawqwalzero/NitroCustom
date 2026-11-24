@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/NitroCustom.Agent/NitroCustom.Agent.csproj" />
+    <Project Path="src/NitroCustom.App/NitroCustom.App.csproj" />
+    <Project Path="src/NitroCustom.Cli/NitroCustom.Cli.csproj" />
+    <Project Path="src/NitroCustom.Core/NitroCustom.Core.csproj" />
+    <Project Path="src/NitroCustom.Service/NitroCustom.Service.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/NitroCustom.Core.Tests/NitroCustom.Core.Tests.csproj" />
+  </Folder>
+</Solution>

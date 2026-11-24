@@ -1,0 +1,15 @@
+# .NET build output
+bin/
+obj/
+publish/
+*.user
+.vs/
+
+# Installer output
+installer/Output/
+
+# Probe logs (may contain machine/user details)
+*.log
+
+# Windows folder metadata
+desktop.ini
