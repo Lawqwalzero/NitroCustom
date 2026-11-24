@@ -104,13 +104,50 @@ public partial class MainWindow : Window
     private void OnConnectionChanged(bool connected)
     {
         ShowStatus(connected ? null : Core.Loc.T("Служба NitroCustom не запущена. Режимы, датчики и подсветка недоступны, переподключаюсь...", "The NitroCustom service is not running. Modes, sensors and lighting are unavailable, reconnecting..."));
-        ProfilePanel.IsEnabled = connected;
-        LightingPanel.IsEnabled = connected;
+        UpdateControlsEnabled();
         if (!connected) UpdateSensors([]);
+    }
+
+    /// <summary>Set by the service: on a laptop model that was not verified, writes stay off until the user allows them.</summary>
+    private ModelDto? _model;
+
+    private bool WritesBlocked => _model is { WritesAllowed: false };
+
+    private void UpdateControlsEnabled()
+    {
+        var enabled = _service.IsConnected && !WritesBlocked;
+        ProfilePanel.IsEnabled = enabled;
+        LightingPanel.IsEnabled = enabled;
+    }
+
+    private void ApplyModel(ModelDto? model)
+    {
+        _model = model;
+        UpdateControlsEnabled();
+        ShowStatus(null);
+    }
+
+    private async void ModelButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_model is not { Verified: false } model) return;
+        var allow = !model.WritesAllowed;
+        if (allow)
+        {
+            var verified = string.Join(", ", SupportedModels.Verified);
+            var answer = MessageBox.Show(this,
+                Core.Loc.T(
+                    $"NitroCustom проверен только на: {verified}. На модели «{model.Model}» смена режимов и подсветки пишет в прошивку ноутбука, и результат непредсказуем. Разрешить запись?",
+                    $"NitroCustom has only been verified on: {verified}. On “{model.Model}” changing modes and lighting writes to the laptop firmware and the result is unpredictable. Allow writing?"),
+                "NitroCustom", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+            if (answer != MessageBoxResult.Yes) return;
+        }
+        try { ApplyModel(await _service.RequestAsync<ModelDto>(IpcCommands.SetUnverifiedConsent, new ConsentArgs(allow))); }
+        catch (Exception ex) { ShowStatus(ex.Message); }
     }
 
     private void OnState(StateDto state)
     {
+        ApplyModel(state.Model);
         _modeKeyColors = state.Lighting.ModeKeyColors;
         ProfilePanel.Children.Clear();
         foreach (var p in Texts.ProfileOrder.Where(state.SupportedProfiles.Contains))
@@ -228,8 +265,20 @@ public partial class MainWindow : Window
         GpuFanGauge.Value = Get(Sensor.GpuFanSpeed);
     }
 
+    /// <summary>An error message, or (with null) the standing notice about an unverified laptop model, if any.</summary>
     private void ShowStatus(string? text)
     {
+        if (text is null && _model is { Verified: false } model)
+        {
+            StatusText.Text = model.WritesAllowed
+                ? Core.Loc.T($"Модель «{model.Model}» не проверена. Запись в прошивку разрешена на ваш риск.", $"“{model.Model}” has not been verified. Writing is enabled at your own risk.")
+                : Core.Loc.T($"Модель «{model.Model}» не проверена. Режимы и подсветка доступны только для чтения.", $"“{model.Model}” has not been verified. Modes and lighting are read-only.");
+            ModelButton.Content = model.WritesAllowed ? Core.Loc.T("Запретить", "Disable") : Core.Loc.T("Разрешить", "Allow");
+            ModelButton.Visibility = Visibility.Visible;
+            StatusBar.Visibility = Visibility.Visible;
+            return;
+        }
+        ModelButton.Visibility = Visibility.Collapsed;
         StatusText.Text = text ?? "";
         StatusBar.Visibility = text is null ? Visibility.Collapsed : Visibility.Visible;
     }

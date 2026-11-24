@@ -18,4 +18,6 @@ First public beta. Verified on Acer Nitro ANV16S-41, BIOS V1.12, Windows 11.
 
 — Interface and installer in Russian or English, chosen by the Windows display language.
 
+— Laptop models that were not verified start read-only. Writing to the firmware needs a click on Allow in the window (or `--force` for `nitroctl`).
+
 Known limits: no fan curves, one verified model, unsigned installer.

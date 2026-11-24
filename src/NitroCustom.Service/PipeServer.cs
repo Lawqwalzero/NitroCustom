@@ -102,6 +102,7 @@ public sealed class PipeServer(NitroService nitro, EventHub hub, ILogger<PipeSer
         IpcCommands.CycleProfile => new ProfileDto(nitro.CycleProfile()),
         IpcCommands.SetLighting => nitro.SetLighting(Require<KeyboardLighting>(data)),
         IpcCommands.SetModeKeyColor => SetModeKey(Require<SetModeKeyColorArgs>(data)),
+        IpcCommands.SetUnverifiedConsent => nitro.SetUnverifiedConsent(Require<ConsentArgs>(data).Allow),
         _ => throw new IpcException($"Unknown command '{command}'."),
     };
 

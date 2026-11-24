@@ -37,12 +37,24 @@ Through the NitroCustom service (no admin needed):
   svc state | svc profile <name> | svc cycle | svc listen [seconds]
   svc light <effect> [#RRGGBB] [bright]   saved by the service, restored after reboot/sleep
   svc modekey <profile> <#RRGGBB>         mode-key colour for a profile
+
+Safety: commands that write to the firmware are refused on a laptop model that has not been verified.
+Add --force to run them anyway, at your own risk.
 """;
 
 if (args.Length == 0 || args[0] is "-h" or "--help" or "help")
 {
     Console.WriteLine(Usage);
     return 0;
+}
+
+var force = args.Contains("--force");
+args = args.Where(a => a != "--force").ToArray();
+if (args.Length > 0 && WritesFirmware(args) && !force && SupportedModels.Detect() is { Status: ModelStatus.Unverified } model)
+{
+    Console.Error.WriteLine($"Blocked: \"{model.Display}\" has not been verified (verified: {string.Join(", ", SupportedModels.Verified)}). " +
+        "This command writes to the firmware. Add --force to run it anyway, at your own risk.");
+    return 2;
 }
 
 try
@@ -57,6 +69,17 @@ catch (Exception ex) when (ex is AcerWmiException or IpcException or LightingHid
     Console.Error.WriteLine("ERROR: " + ex.Message);
     return 1;
 }
+
+// Direct commands that change the firmware state. "svc" goes through the service, which has its own guard.
+static bool WritesFirmware(string[] a) => a[0] switch
+{
+    "profile" => a.Length > 1,
+    "cycle" => true,
+    "ec" => a.Length > 1,
+    "kb" => a.Length > 1 && a[1] is "zone" or "raw-set" or "sweep",
+    "light" => a.Length > 1 && a[1] != "info",
+    _ => false,
+};
 
 static int Ec(string[] args)
 {

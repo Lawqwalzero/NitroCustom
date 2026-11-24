@@ -17,7 +17,7 @@ How to cut a public release. Follow the steps in order.
 | Tests pass | `dotnet test tests/NitroCustom.Core.Tests -c Release` |
 | Changelog is written | Add a section to `CHANGELOG.md` |
 | Known limits are honest | Update the limitations in `README.md` and `README.ru.md` |
-| Supported models table is current | `docs/SUPPORTED_MODELS.md` |
+| Supported models table is current | `docs/SUPPORTED_MODELS.md` and `SupportedModels.Verified` in `src/NitroCustom.Core/Hardware/SupportedModels.cs` agree |
 | No personal data | Search the tree for your name, e-mail, paths like `C:\Users\`, serial numbers |
 
 ## 3. Build the installer
@@ -37,6 +37,7 @@ Test the exact file you will publish, not a debug build.
 2. On the verified laptop: switch each profile from the window, from the mode key and from the tray, then change keyboard lighting and reboot. The saved profile and lighting must come back.
 3. Install the new build over the old one. `settings.json` must stay unchanged.
 4. Uninstall from Windows Settings. The service and the files in `Program Files\NitroCustom` must be gone.
+   On a laptop that is not the verified model, also check that the window shows the read-only notice and that nothing changes until you press Allow.
 5. Upload the installer to [VirusTotal](https://www.virustotal.com) and keep the report link for the release notes. A few heuristic detections are common for unsigned installers that register a service.
 
 ## 5. Publish the code
@@ -92,6 +93,6 @@ If you use the GitHub CLI, the same can be done with `gh release create v0.1.0-b
 ## 8. After release
 
 1. Answer the first reports quickly. They shape the project.
-2. When a model is confirmed by a report with output, add it to `docs/SUPPORTED_MODELS.md` with the BIOS and Windows versions.
+2. When a model is confirmed by a report with output, add its id to `SupportedModels.Verified` (the part of the model name after "Nitro ", as the BIOS reports it) and to `docs/SUPPORTED_MODELS.md` with the BIOS and Windows versions. Until then it stays read-only for everyone else.
 3. There is no auto-update. Each release means a new tag, installer and checksum.
-4. Optional later: code signing through the [SignPath Foundation](https://signpath.org/) (free for open source) and a model allow-list in the program itself.
+4. Optional later: code signing through the [SignPath Foundation](https://signpath.org/) (free for open source).

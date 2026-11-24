@@ -11,6 +11,7 @@ if (WindowsServiceHelpers.IsWindowsService())
     builder.Services.AddHostedService<AppLauncher>(); // needs SYSTEM (WTSQueryUserToken)
 }
 
+builder.Services.AddSingleton(_ => SupportedModels.Detect());
 builder.Services.AddSingleton<PowerEvents>();
 builder.Services.AddSingleton<EventHub>();
 builder.Services.AddSingleton<SettingsStore>();

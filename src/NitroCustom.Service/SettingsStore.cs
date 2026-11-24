@@ -16,6 +16,9 @@ public sealed record ServiceSettings
     /// <summary>Keyboard lighting; null = leave the firmware state as is until the user changes it.</summary>
     public KeyboardLighting? Lighting { get; init; }
 
+    /// <summary>The user agreed to write to the firmware of a laptop model that was not verified.</summary>
+    public bool AllowUnverifiedModel { get; init; }
+
     /// <summary>Mode-key colour per profile (#RRGGBB).</summary>
     public IReadOnlyDictionary<ThermalProfile, string> ModeKeyColors { get; init; } = DefaultModeKeyColors;
 
@@ -38,10 +41,11 @@ public sealed class SettingsStore
     private ServiceSettings _current;
     private static readonly JsonSerializerOptions FileJson = new(IpcProtocol.Json) { WriteIndented = true };
 
-    public SettingsStore(ILogger<SettingsStore> log)
+    /// <param name="directory">Settings folder; by default the NitroCustom folder under ProgramData (tests pass a temporary one).</param>
+    public SettingsStore(ILogger<SettingsStore> log, string? directory = null)
     {
         _log = log;
-        var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "NitroCustom");
+        var dir = directory ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "NitroCustom");
         Directory.CreateDirectory(dir);
         _path = Path.Combine(dir, "settings.json");
         _current = Load();

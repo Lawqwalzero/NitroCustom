@@ -5,7 +5,7 @@ A small, local replacement for Acer NitroSense: thermal profiles, keyboard light
 [Русская версия](README.ru.md)
 
 > **Beta. Read this first.**
-> NitroCustom writes to your laptop's firmware through Acer's own WMI interface and the keyboard lighting controller. It has been tested on **one model only: Acer Nitro ANV16S-41, BIOS V1.12**. On any other model the behaviour is unknown. Use it at your own risk, see [docs/SUPPORTED_MODELS.md](docs/SUPPORTED_MODELS.md) and the [MIT license](LICENSE).
+> NitroCustom writes to your laptop's firmware through Acer's own WMI interface and the keyboard lighting controller. It has been tested on **one model only: Acer Nitro ANV16S-41, BIOS V1.12**. On any other model the behaviour is unknown, so NitroCustom starts there in **read-only mode**: it shows sensors and the current mode, and writes nothing to the firmware until you click **Allow** in the window. Use it at your own risk, see [docs/SUPPORTED_MODELS.md](docs/SUPPORTED_MODELS.md) and the [MIT license](LICENSE).
 
 ## Why NitroCustom
 
@@ -27,6 +27,7 @@ NitroCustom is small on purpose. It switches thermal profiles, sets keyboard lig
 | Nitro key and mode key | The lightning key opens the window, the mode key cycles profiles |
 | On-screen notification | A small card with the new profile name when you switch modes |
 | Tray | Lives in the system tray, starts with Windows, no UAC prompt on login |
+| Safety | On a laptop model that was not verified, everything is read-only until you allow writing |
 
 ## Install
 
@@ -61,7 +62,7 @@ The code makes no network connections and opens no ports. Parts talk to each oth
 
 — Running next to Acer NitroSense or Quick Access is untested. Both want the same keys, so uninstall them first.
 
-— Only the ANV16S-41 is verified, and only on Windows 11.
+— Only the ANV16S-41 is verified, and only on Windows 11. Other models stay read-only until you allow writing.
 
 ## Alternatives
 

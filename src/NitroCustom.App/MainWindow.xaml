@@ -72,7 +72,10 @@
                 <!-- Status (only when something is wrong) -->
                 <Border x:Name="StatusBar" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,14"
                         Background="#CC2A0E08" BorderBrush="{StaticResource Accent}" BorderThickness="1" Padding="14,7" Visibility="Collapsed" Panel.ZIndex="10">
-                    <TextBlock x:Name="StatusText" Style="{StaticResource Caption}" Foreground="{StaticResource Text}" TextWrapping="Wrap" MaxWidth="520" />
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="StatusText" Style="{StaticResource Caption}" Foreground="{StaticResource Text}" TextWrapping="Wrap" MaxWidth="440" VerticalAlignment="Center" />
+                        <Button x:Name="ModelButton" Style="{StaticResource Quiet}" Foreground="{StaticResource Accent}" FontSize="13" MinWidth="96" Height="28" Margin="14,0,0,0" Visibility="Collapsed" Click="ModelButton_Click" />
+                    </StackPanel>
                 </Border>
 
                 <Grid Grid.Row="2" Margin="40,10,40,34">

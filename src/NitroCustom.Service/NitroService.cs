@@ -19,7 +19,7 @@ public sealed class EventHub
 
 /// <summary>Use cases shared by the pipe API, hotkeys and startup restore.</summary>
 public sealed class NitroService(
-    NitroController hw, LightingController light, SettingsStore store, EventHub hub, ILogger<NitroService> log)
+    NitroController hw, LightingController light, SettingsStore store, EventHub hub, ModelInfo model, ILogger<NitroService> log)
 {
     private const byte ModeKeyBrightness = 80;
     private ThermalProfile? _lastKnownProfile;
@@ -28,7 +28,29 @@ public sealed class NitroService(
     {
         var profile = hw.GetProfile();
         if (_lastKnownProfile != profile) OnProfileChanged(profile, "state");
-        return new StateDto(profile, hw.GetSupportedProfiles(), store.Current.CycleOrder, GetSensors(), GetLighting());
+        return new StateDto(profile, hw.GetSupportedProfiles(), store.Current.CycleOrder, GetSensors(), GetLighting(), GetModel());
+    }
+
+    /// <summary>Verified models always write; any other model only after the user agreed.</summary>
+    public bool WritesAllowed => model.Status == ModelStatus.Verified || store.Current.AllowUnverifiedModel;
+
+    public ModelDto GetModel() => new(model.Display, model.Bios, model.Status == ModelStatus.Verified, WritesAllowed);
+
+    /// <summary>Records the user's choice for a model that was not verified. Verified models ignore it.</summary>
+    public ModelDto SetUnverifiedConsent(bool allow)
+    {
+        if (model.Status == ModelStatus.Unverified)
+        {
+            store.Update(s => s with { AllowUnverifiedModel = allow });
+            log.LogWarning("Writes to the firmware of unverified model {Model} {State} by the user", model.Display, allow ? "enabled" : "disabled");
+        }
+        return GetModel();
+    }
+
+    private void RequireWrites()
+    {
+        if (!WritesAllowed)
+            throw new IpcException("Read-only: this laptop model has not been verified, so changes to modes and lighting are disabled until you allow them in the window.");
     }
 
     public IReadOnlyList<SensorDto> GetSensors() =>
@@ -42,6 +64,7 @@ public sealed class NitroService(
 
     public ThermalProfile SetProfile(ThermalProfile profile)
     {
+        RequireWrites();
         SwitchProfile(profile);
         store.Update(s => s with { Profile = profile });
         OnProfileChanged(profile, "user");
@@ -50,6 +73,7 @@ public sealed class NitroService(
 
     public ThermalProfile CycleProfile()
     {
+        RequireWrites();
         var next = hw.NextProfile(store.Current.CycleOrder);
         SwitchProfile(next);
         store.Update(s => s with { Profile = next });
@@ -59,6 +83,7 @@ public sealed class NitroService(
 
     public LightingDto SetLighting(KeyboardLighting lighting)
     {
+        RequireWrites();
         var valid = lighting.Validated();
         light.Apply(valid);
         store.Update(s => s with { Lighting = valid });
@@ -67,6 +92,7 @@ public sealed class NitroService(
 
     public LightingDto SetModeKeyColor(ThermalProfile profile, Rgb color)
     {
+        RequireWrites();
         store.Update(s => s with { ModeKeyColors = new Dictionary<ThermalProfile, string>(s.ModeKeyColors) { [profile] = color.ToString() } });
         if (_lastKnownProfile == profile) WriteModeKey(profile);
         return PublishLighting();
@@ -76,6 +102,15 @@ public sealed class NitroService(
     public void ApplySaved(string reason)
     {
         var s = store.Current;
+        if (reason == "startup")
+            log.LogInformation("Model {Model}, BIOS {Bios}: {Status}, writes {Writes}", model.Display, model.Bios, model.Status, WritesAllowed ? "allowed" : "blocked (read-only)");
+        if (!WritesAllowed)
+        {
+            // Read-only: report the profile the firmware is in, change nothing.
+            try { OnProfileChanged(hw.GetProfile(), reason); }
+            catch (Exception ex) { log.LogWarning(ex, "Could not read the profile ({Reason})", reason); }
+            return;
+        }
         try
         {
             var current = hw.GetProfile();
@@ -130,8 +165,11 @@ public sealed class NitroService(
     {
         _lastKnownProfile = profile;
         log.LogInformation("Profile {Profile} ({Reason})", profile, reason);
-        ApplyPowerMode(profile);
-        ApplyModeKey(profile);
+        if (WritesAllowed)
+        {
+            ApplyPowerMode(profile);
+            ApplyModeKey(profile);
+        }
         hub.Publish(IpcEvents.ProfileChanged, new ProfileDto(profile, reason));
     }
 
@@ -193,6 +231,7 @@ public sealed class NitroService(
     /// <summary>Returns false when there is no colour for the profile or the write failed.</summary>
     private bool WriteModeKey(ThermalProfile profile)
     {
+        if (!WritesAllowed) return false;
         if (!store.Current.ModeKeyColors.TryGetValue(profile, out var color)) return false;
         try
         {

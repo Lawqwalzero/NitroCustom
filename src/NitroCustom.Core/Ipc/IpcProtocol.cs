@@ -48,6 +48,7 @@ public static class IpcCommands
     public const string CycleProfile = "cycleProfile";
     public const string SetLighting = "setLighting";
     public const string SetModeKeyColor = "setModeKeyColor";
+    public const string SetUnverifiedConsent = "setUnverifiedConsent";
 }
 
 public static class IpcEvents
@@ -66,7 +67,16 @@ public sealed record StateDto(
     IReadOnlyList<ThermalProfile> SupportedProfiles,
     IReadOnlyList<ThermalProfile> CycleOrder,
     IReadOnlyList<SensorDto> Sensors,
-    LightingDto Lighting);
+    LightingDto Lighting,
+    ModelDto? Model = null);
+
+/// <summary>
+/// The laptop model and whether writes to the firmware are allowed on it. Verified models always allow them;
+/// on other models they stay off until the user consents (null in <see cref="StateDto"/> = older service).
+/// </summary>
+public sealed record ModelDto(string Model, string Bios, bool Verified, bool WritesAllowed);
+
+public sealed record ConsentArgs(bool Allow);
 
 /// <summary>Keyboard lighting plus the mode-key colour per profile (#RRGGBB).</summary>
 public sealed record LightingDto(KeyboardLighting Keyboard, IReadOnlyDictionary<ThermalProfile, string> ModeKeyColors);

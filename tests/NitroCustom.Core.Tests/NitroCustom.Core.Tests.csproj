@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\NitroCustom.Core\NitroCustom.Core.csproj" />
+    <ProjectReference Include="..\..\src\NitroCustom.Service\NitroCustom.Service.csproj" />
   </ItemGroup>
 
 </Project>
