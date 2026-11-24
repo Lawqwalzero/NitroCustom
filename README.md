@@ -72,6 +72,10 @@ If NitroCustom does not fit your laptop, look at [nitrous](https://github.com/je
 
 Run the diagnostics from [docs/SUPPORTED_MODELS.md](docs/SUPPORTED_MODELS.md) and open a hardware report using the issue template.
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). The safety rules about writing to firmware are part of the project, please read them first.
+
 ## Disclaimer
 
 NitroCustom is an independent project. It is not affiliated with, endorsed by or sponsored by Acer Inc. Acer, Nitro and NitroSense are trademarks of their respective owners. The software is provided as is, without warranty of any kind.

@@ -31,6 +31,8 @@ Inno Setup prints one warning about `PrivilegesRequired=admin` together with a p
 
 ## Repository layout
 
+For how the parts work together and the safety rules, see [ARCHITECTURE.md](ARCHITECTURE.md).
+
 | Path | Contents |
 |---|---|
 | `src/NitroCustom.Core` | Firmware access (WMI, EC and lighting HID), IPC protocol, shared logic |
