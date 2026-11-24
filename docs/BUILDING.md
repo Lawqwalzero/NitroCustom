@@ -49,3 +49,5 @@ Inno Setup prints one warning about `PrivilegesRequired=admin` together with a p
 — The service writes `C:\ProgramData\NitroCustom\settings.json`. Delete it to return to defaults.
 
 — Do not run write commands from the tool on a laptop model that has not been verified.
+
+— To test the other language, set the environment variable `NITROCUSTOM_LANGUAGE` to `en` or `ru` before starting the app. By default the language follows the Windows display language.

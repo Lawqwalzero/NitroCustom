@@ -28,4 +28,14 @@ public class LocTests
         Assert.Equal(ru, ProfileNames.Title(profile, true));
         Assert.Equal(en, ProfileNames.Title(profile, false));
     }
+
+    [Theory]
+    [InlineData("en", "ru-RU", false)]
+    [InlineData("ru", "en-US", true)]
+    [InlineData(" EN ", "ru-RU", false)]
+    [InlineData("", "ru-RU", true)]
+    [InlineData(null, "en-US", false)]
+    [InlineData("de", "ru-RU", true)]
+    public void EnvironmentOverrideWinsOverTheDisplayLanguage(string? value, string culture, bool russian) =>
+        Assert.Equal(russian, Loc.Resolve(value, CultureInfo.GetCultureInfo(culture)));
 }

@@ -7,6 +7,16 @@ A small, local replacement for Acer NitroSense: thermal profiles, keyboard light
 > **Beta. Read this first.**
 > NitroCustom writes to your laptop's firmware through Acer's own WMI interface and the keyboard lighting controller. It has been tested on **one model only: Acer Nitro ANV16S-41, BIOS V1.12**. On any other model the behaviour is unknown. Use it at your own risk, see [docs/SUPPORTED_MODELS.md](docs/SUPPORTED_MODELS.md) and the [MIT license](LICENSE).
 
+## Why NitroCustom
+
+NitroCustom is small on purpose. It switches thermal profiles, sets keyboard lighting and shows the essentials in a window that looks like the NitroSense you already know. No accounts, no network connections. If you want history graphs, fan curves or CPU power limits, [nitrous](https://github.com/jeremyaliparo/nitrous) is the better choice.
+
+## Screenshots
+
+![Main window](docs/images/window.png)
+
+![On-screen notification when the mode changes](docs/images/osd.png)
+
 ## What it does
 
 | Area | What you get |
